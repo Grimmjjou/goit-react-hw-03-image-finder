@@ -12,7 +12,7 @@ export default class Modal extends Component {
     window.addEventListener('keydown', this.clickEsc);
   }
   componentWillUnmount() {
-    window.addEventListener('keydown', this.clickEsc);
+    window.removeEventListener('keydown', this.clickEsc);
   }
   clickBackdrop = e => {
     if (e.target === e.currentTarget) {
