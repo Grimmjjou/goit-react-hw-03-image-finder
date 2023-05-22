@@ -1,51 +1,46 @@
 import React, { Component } from 'react';
-import ImageGallery from './ImageGallery/ImageGallery';
-import Modal from './Modal/Modal';
-import Search from './SearchBar/SearchBar';
+import Searchbar from './Searchbar';
+import ImageGallery from './ImageGallery';
+import Modal from './Modal';
+import '../styles/styles.css';
 
-class App extends Component {
+export class App extends Component {
   state = {
-    inputValue: '',
-    modalImg: '',
+    pictureName: '',
     showModal: false,
-    page: 1,
+    largePicture: null,
+    pictureTag: null,
   };
 
-  getInputValue = handleValue => {
-    this.setState({ inputValue: handleValue, page: 1 });
+  handleFormSubmit = pictureName => {
+    this.setState({ pictureName });
   };
 
-  toggleModal = () => {
-    this.setState(({ showModal }) => ({ showModal: !showModal }));
-  };
-
-  getLargeImg = url => {
-    this.toggleModal();
-    this.setState({ modalImg: url });
-  };
-
-  loadMoreBtn = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
+  toggleModal = e => {
+    const { showModal } = this.state;
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
     }));
+    if (!showModal) {
+      this.setState({
+        largePicture: e.currentTarget.getAttribute('srcSet'),
+        pictureTag: e.currentTarget.getAttribute('alt'),
+      });
+    }
   };
 
   render() {
-    const { modalImg, showModal, page } = this.state;
-
+    const { pictureName, showModal, largePicture, pictureTag } = this.state;
     return (
-      <>
-        <Search getInputValue={this.getInputValue} />
-        <ImageGallery
-          inputValue={this.state.inputValue}
-          onClick={this.getLargeImg}
-          loadMoreBtn={this.loadMoreBtn}
-          page={page}
-        />
-        {showModal && <Modal url={modalImg} onClose={this.toggleModal} />}
-      </>
+      <div className="App">
+        <Searchbar onSubmit={this.handleFormSubmit} />
+        <ImageGallery pictureName={pictureName} showModal={this.toggleModal} />
+        {showModal && (
+          <Modal onClose={this.toggleModal}>
+            <img src={largePicture} alt={pictureTag} />
+          </Modal>
+        )}
+      </div>
     );
   }
 }
-
-export default App;
