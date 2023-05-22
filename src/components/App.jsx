@@ -1,46 +1,46 @@
-import React, { Component } from 'react';
-import Searchbar from './Searchbar';
-import ImageGallery from './ImageGallery';
-import Modal from './Modal';
-import '../styles/styles.css';
+import { Component } from 'react';
+import { ImageGallery } from './ImageGallery/ImageGallery';
+import { Searchbar } from './Searchbar/Searchbar';
+import { Modal } from './Modal/Modal';
 
 export class App extends Component {
   state = {
-    pictureName: '',
-    showModal: false,
-    largePicture: null,
-    pictureTag: null,
+    image: '',
+    query: '',
   };
 
-  handleFormSubmit = pictureName => {
-    this.setState({ pictureName });
+  handlerOpenModal = img => {
+    this.setState({ image: img });
   };
 
-  toggleModal = e => {
-    const { showModal } = this.state;
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-    }));
-    if (!showModal) {
-      this.setState({
-        largePicture: e.currentTarget.getAttribute('srcSet'),
-        pictureTag: e.currentTarget.getAttribute('alt'),
-      });
-    }
+  handlerCloseModal = () => {
+    this.setState({ image: '' });
+  };
+
+  handlerForm = query => {
+    this.setState({ query });
   };
 
   render() {
-    const { pictureName, showModal, largePicture, pictureTag } = this.state;
+    const { image, query } = this.state;
     return (
-      <div className="App">
-        <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery pictureName={pictureName} showModal={this.toggleModal} />
-        {showModal && (
-          <Modal onClose={this.toggleModal}>
-            <img src={largePicture} alt={pictureTag} />
-          </Modal>
-        )}
-      </div>
+      <>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr0',
+            gridGap: '16px',
+            paddingBottom: '24px',
+          }}
+        >
+          <Searchbar onSubmit={this.handlerForm} />
+          <ImageGallery
+            query={query}
+            handlerOpenModal={this.handlerOpenModal}
+          />
+          {image && <Modal image={image} onClose={this.handlerCloseModal} />}
+        </div>
+      </>
     );
   }
 }
